@@ -11,8 +11,11 @@ Objective:
 #include <chrono>
 #include <iostream>
 
+#include "AppointmentSystem.h"
+
 int main() {
   int choice = 0;
+  AppointmentSystem foundation = AppointmentSystem();
 
   while(choice != 3) {
     std::cout << "\n=== Plataforma gestión de citas ===\n"
@@ -30,6 +33,8 @@ int main() {
     
         if (choice == 1) {
           std::cout << "Elección 1\n";
+          foundation.insertUser();
+
         } else if (choice == 2) {
           std::cout << "Elección 2\n";
         } else if (choice == 3){
@@ -38,6 +43,6 @@ int main() {
           std::cout << "Entrada inválida. Por favor, ingrese un número.\n";
         }
   }
-
+  foundation.~AppointmentSystem();
   return 0;
 }

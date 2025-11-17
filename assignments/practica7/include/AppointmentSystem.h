@@ -69,6 +69,10 @@ class AppointmentSystem {
  public:
   AppointmentSystem();
   ~AppointmentSystem();
+  
+  void initDataBase();
+  // Opens the database and adds a user
+  bool insertUser();
 
   void addRobot(std::unique_ptr<Robot>);
 

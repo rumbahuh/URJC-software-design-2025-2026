@@ -16,7 +16,6 @@ Objective:
 #include <algorithm>
 #include <chrono>
 #include <vector>
-#include <chrono>
 #include <iostream>
 #include <set>
 
@@ -26,7 +25,8 @@ AppointmentSystem::AppointmentSystem() {
         std::cerr << "No se pudo abrir la base de datos\n";
         throw std::runtime_error("Database error.");
     }
-  
+  initDataBase();
+
   pacients = std::make_unique<std::unique_ptr<Pacient>[]>(MAX_PACIENTS);
   doctors = std::make_unique<std::unique_ptr<Doctor>[]>(MAX_DOCTORS);
   agendas = std::make_unique<std::unique_ptr<Agenda>[]>(MAX_DOCTORS);
@@ -42,6 +42,68 @@ AppointmentSystem::AppointmentSystem() {
 // The destructor needs to close the database
 AppointmentSystem::~AppointmentSystem() {
     sqlite3_close(db);
+}
+
+void AppointmentSystem::initDataBase() {
+  // Specification
+  const char* sql_user = R"(
+      CREATE TABLE IF NOT EXISTS USER (
+          ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          USERNAME TEXT NOT NULL UNIQUE,
+          PASSWORD TEXT NOT NULL,
+          ROLE TEXT NOT NULL -- 'Doctor', 'Patient', 'Administrator'
+      );
+  )";
+
+  char* errMsg = nullptr;
+  if (sqlite3_exec(db, sql_user, nullptr, nullptr, &errMsg) != SQLITE_OK) {
+      std::cerr << "Error creating USER table: " << errMsg << "\n";
+      sqlite3_free(errMsg);
+  } else {
+      std::cout << "USER table created successfully!\n";
+  }
+}
+// The system already deals with closing the database
+// so we don't need to add it on every function to modify
+// the db
+bool AppointmentSystem::insertUser() {
+  int rc;
+  bool returning = false;
+
+  std::string user_name, password, type;
+
+  std::cout << "Nombre de usuario: ";
+  std::getline(std::cin, user_name);
+  std::cout << "Contraseña: ";
+  std::getline(std::cin, password);
+  std::cout << "Tipo de usuario: ";
+  std::getline(std::cin, type);
+
+  // Sentencia SQL que coincide con la tabla USER
+  const char* sql = "INSERT INTO USER (USERNAME, PASSWORD, ROLE) VALUES (?, ?, ?);";
+
+  sqlite3_stmt* stmt;
+
+  rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+  if (rc != SQLITE_OK) {
+      std::cerr << "Error al preparar la sentencia: " << sqlite3_errmsg(db) << std::endl;
+      return returning;
+  }
+
+  sqlite3_bind_text(stmt, 1, user_name.c_str(), -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 3, type.c_str(), -1, SQLITE_TRANSIENT);
+
+  rc = sqlite3_step(stmt);
+  if (rc != SQLITE_DONE) {
+      std::cerr << "Error al insertar datos: " << sqlite3_errmsg(db) << std::endl;
+  } else {
+      std::cout << "Datos insertados correctamente.\n";
+      returning = true;
+  }
+
+  sqlite3_finalize(stmt);
+  return returning;
 }
 
 void AppointmentSystem::addRobot(std::unique_ptr<Robot> r) { robots.insert(std::move(r)); }
