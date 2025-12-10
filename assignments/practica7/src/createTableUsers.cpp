@@ -7,31 +7,30 @@ Objective:
 */
 
 #include <sqlite3.h>
+
 #include <iostream>
 
 int main() {
-    sqlite3* db;
-    if (sqlite3_open("appointment_system.db", &db) != SQLITE_OK) {
-        std::cerr << "Cannot open database\n";
-        return 1;
-    }
+  sqlite3* db;
+  if (sqlite3_open("appointment_system.db", &db) != SQLITE_OK) {
+    std::cerr << "Cannot open database\n";
+    return 1;
+  }
 
-    // Specification
-    const char* sql_user = R"(
-        CREATE TABLE IF NOT EXISTS USER (
-            ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            USERNAME TEXT NOT NULL UNIQUE,
-            PASSWORD TEXT NOT NULL,
-            ROLE TEXT NOT NULL -- 'Doctor', 'Patient', 'Administrator'
-        );
-    )";
+  // Specification
+      const char *sql_user =
+      "CREATE TABLE IF NOT EXISTS USER ("
+      "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+      "USERNAME TEXT NOT NULL UNIQUE,"
+      "PASSWORD TEXT NOT NULL,"
+      "ROLE TEXT NOT NULL);";
 
-    char* errMsg = nullptr;
+        char* errMsg = nullptr;
     if (sqlite3_exec(db, sql_user, nullptr, nullptr, &errMsg) != SQLITE_OK) {
-        std::cerr << "Error creating USER table: " << errMsg << "\n";
-        sqlite3_free(errMsg);
+      std::cerr << "Error creating USER table: " << errMsg << "\n";
+      sqlite3_free(errMsg);
     } else {
-        std::cout << "USER table created successfully!\n";
+      std::cout << "USER table created successfully!\n";
     }
 
     sqlite3_close(db);

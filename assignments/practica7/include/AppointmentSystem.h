@@ -7,17 +7,18 @@ Objective:
   It provides methods to create and cancel appointments, assign doctors,
   generate tickets, and send notifications.
 
-  This class owns all objects in the system through unique_ptr.
+  This class owns all objects, creates tables of the database and handles USER.
 */
 
 #ifndef APPOINTMENT_SYSTEM_H
 #define APPOINTMENT_SYSTEM_H
 
 #include <sqlite3.h>
-#include <vector>
+
 #include <iostream>
 #include <memory>
 #include <set>
+#include <vector>
 
 #include "Admin.h"
 #include "Agenda.h"
@@ -40,7 +41,7 @@ struct RobotCompare {
 
 class AppointmentSystem {
  protected:
-  sqlite3* db;
+  sqlite3 *db;
 
  private:
   static const int MAX_PACIENTS = 100;
@@ -55,11 +56,12 @@ class AppointmentSystem {
   // Nuevo almacenamiento de STL ordenada automáticamente por el tiempo
   std::set<std::unique_ptr<Robot>, RobotCompare> robots;
   // --------------------------
-  // Database of pointers
-  std::unique_ptr<std::unique_ptr<Pacient>[]> pacients;
-  std::unique_ptr<std::unique_ptr<Doctor>[]> doctors;
+  /* Some of this vectors could be deleted if wanted as we deal with the database now,
+  but just in case i need them later I've decided to keep them as a temporary measure. */
+  std::vector<std::unique_ptr<Pacient>> pacients;
+  std::vector<std::unique_ptr<Doctor>> doctors;
   std::unique_ptr<std::unique_ptr<Agenda>[]> agendas;
-  std::unique_ptr<std::unique_ptr<Admin>[]> admins;
+  std::vector<std::unique_ptr<Admin>> admins;
   std::unique_ptr<std::unique_ptr<Ticket>[]> tickets;
   std::unique_ptr<std::unique_ptr<Room>[]> rooms;
   std::unique_ptr<std::unique_ptr<Appointment>[]> appointments;
@@ -69,14 +71,20 @@ class AppointmentSystem {
  public:
   AppointmentSystem();
   ~AppointmentSystem();
-  
+
   void initDataBase();
-  // Opens the database and adds a user
+  sqlite3 *getDb();
+  // Sentencia preparada para inserción segura de los datos
+  // de la tabla de usuarios
   bool insertUser();
+
+  // Devuelve un objeto de la clase padre User:
+  // Una instancia dinámica del objeto de clase correspondiente (Polimorfismo)
+  std::unique_ptr<User> login();
 
   void addRobot(std::unique_ptr<Robot>);
 
-  /*Prints the states of the robots storaged in 
+  /*Prints the states of the robots storaged in
   the vector as well as the real time since last activity*/
   void getAllRobotStatesTime();
 
@@ -86,7 +94,7 @@ class AppointmentSystem {
   // Devuelve el robot libre más inactivo (null si no hay ninguno)
   Robot *getNextAvailableRobot();
   // --------------------------
-  
+
   // Generates appointment, assigns it to concerning users and adds it to its
   // pointer
   void createAppointment();
@@ -110,14 +118,11 @@ class AppointmentSystem {
   // Adds time slot to its place on pointer
   void addTime(const std::string &p);
 
-  // Checks if user with said credentials exist on database
-  bool login(std::string, std::string);
-  
   // --------------------------
-  const std::unique_ptr<std::unique_ptr<Pacient>[]> &getPacients() const;
-  const std::unique_ptr<std::unique_ptr<Doctor>[]> &getDoctors() const;
+  const std::vector<std::unique_ptr<Pacient>> &getPacients() const;
+  std::vector<std::unique_ptr<Doctor>> &getDoctors();
   const std::unique_ptr<std::unique_ptr<Agenda>[]> &getAgendas() const;
-  const std::unique_ptr<std::unique_ptr<Admin>[]> &getAdmins() const;
+  const std::vector<std::unique_ptr<Admin>> &getAdmins() const;
   const std::unique_ptr<std::unique_ptr<Ticket>[]> &getTickets() const;
   const std::unique_ptr<std::unique_ptr<Room>[]> &getRooms() const;
   const std::unique_ptr<std::unique_ptr<Appointment>[]> &getAppointments()

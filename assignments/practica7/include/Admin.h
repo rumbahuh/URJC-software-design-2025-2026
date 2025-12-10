@@ -8,21 +8,27 @@ Objective:
 
 #ifndef ADMIN_H
 #define ADMIN_H
+
+#include <chrono>
+#include <memory>
+#include <vector>
+
 #include "User.h"
 
-class Admin : public User{
- private:
+class AppointmentSystem;
 
+class Admin : public User {
+ private:
  public:
   Admin(int id, std::string nombre, std::string mail, std::string pw);
 
-  // Assigns specialty to Doctor
-  void assignSpecialty();
-  // Direct access to agendas pointer on Appointment system
-  void manageAgendas();
-  // Manage doctors
-  void manageMedicalCensus();
+  std::string getRole() const override;
 
+  void assignAgenda(AppointmentSystem&);
+  void createDoctor(AppointmentSystem&);
+  void seeDoctorList(AppointmentSystem&);
+  void seeAppointments();
+  void showMenu(AppointmentSystem&);
 };
 
 #endif  // ADMIN_H

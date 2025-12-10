@@ -1,15 +1,16 @@
-/*
-Authoress: Rebeca Castilla
-Date: 17-27/11/2025
-Objective:
-  The Doctor class represents a single person
-  object with an assigned specialty and its methods.
-*/
+/**
+ * \author Rebeca Castilla
+ * \date 17-27/11/2025
+ * \brief The Doctor class represents a single person
+ *        object with an assigned specialty and its methods.
+ * \param room
+ * \param specialty
+ */
 
-#include "Doctor.h"
+#include "users/Doctor.h"
 
-#include "Agenda.h"
-#include "Room.h"
+#include "appointments/Agenda.h"
+#include "appointments/Room.h"
 
 Doctor::Doctor(int id, std::string nombre, std::string mail, std::string pw,
                std::string specialty)

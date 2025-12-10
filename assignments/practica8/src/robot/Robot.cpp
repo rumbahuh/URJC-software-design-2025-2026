@@ -1,20 +1,23 @@
-/*
-Authoress: Rebeca Castilla
-Date: 17-27/11/2025
-Objective:
-  The Robot class represents a robotic assistant that interacts
-  with Pacients and Rooms. It can retrieve Pacient information, access
-  appointments, print tickets, and guide users.
-*/
+/**
+ * \author Rebeca Castilla
+ * \date 17-27/11/2025
+ * \brief The Robot class represents a robotic assistant that interacts
+ *        with Pacients and Rooms. It can retrieve Pacient information, access
+ *        appointments, print tickets, and guide users.
+ * \param id
+ * \param estado
+ * \param ultimaActividad
+ * \param mtx
+ */
 
-#include "Robot.h"
+#include "robot/Robot.h"
 
 #include <chrono>
 #include <iostream>
 #include <thread>
 
-#include "Appointment.h"
-#include "Pacient.h"
+#include "appointments/Appointment.h"
+#include "users/Pacient.h"
 
 Robot::Robot(int idRobot) : id(idRobot), estado("Libre") {
   ultimaActividad = std::chrono::steady_clock::now();

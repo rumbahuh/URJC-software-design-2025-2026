@@ -9,35 +9,36 @@ Objective:
 #ifndef DOCTOR_H
 #define DOCTOR_H
 
+#include <chrono>
 #include <iostream>
 #include <string>
+
 #include "User.h"
 
 class Room;
 class Agenda;
 
-class Doctor : public User{ // Inherits from User
+class Doctor : public User {  // Inherits from User
+ private:
+  std::string room;
+
  public:
-  Doctor(int id, std::string nombre, std::string mail,
-           std::string pw, std::string specialty = ""); // Usar &?
+  Doctor(int id, std::string nombre, std::string mail, std::string pw,
+         std::string specialty = "");  // Usar &?
 
   // Admin will assign it externally
   std::string specialty;
 
-  // Allows the doctor to edit their agenda in the appointment system
-  void editAgenda();
-
-  // Marks patient attendance (assistance) in the appointment system
-  void markAssistance(bool a);
-
-  // Checks or reviews the doctor's agenda
-  void checkAgenda();
-
   // Returns the assigned room id
   void getRoom();
 
- private:
-  std::string room;
+  std::string getRole() const override;
+
+  void confirmAssistance();
+  void modifyAgenda();
+  void addNotesToAppointment();
+
+  void showMenu();
 };
 
 #endif  // DOCTOR_H

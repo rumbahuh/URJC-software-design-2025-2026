@@ -11,10 +11,10 @@ Objective:
 #ifndef ROBOT_H
 #define ROBOT_H
 
+#include <chrono>  //para gestionar los tiempos.
 #include <iostream>
+#include <mutex>  //para gestionar acciones en paralelo
 #include <string>
-#include <chrono> //para gestionar los tiempos.
-#include <mutex> //para gestionar acciones en paralelo
 
 #include "Ticket.h"
 
@@ -36,7 +36,7 @@ class Robot {
   std::string roomId;
   std::string pacientId;
   std::string sensor;
-  
+
   // Devuelve el int de id
   int getId() const;
 

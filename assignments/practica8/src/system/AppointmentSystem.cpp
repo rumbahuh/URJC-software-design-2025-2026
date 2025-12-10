@@ -1,16 +1,15 @@
-/*
-Authoress: Rebeca Castilla
-Date: 17-23/11/2025
-Objective:
-  The AppointmentSystem class manages all system objects, including Pacients,
-  Doctors, Admins, RobotAssistants, Tickets, Rooms, Agendas and Appointments.
-  It provides methods to create and cancel appointments, assign doctors,
-  generate tickets, and send notifications.
+/**
+ * \author Rebeca Castilla
+ * \date 17-23/11/2025
+ * \brief The AppointmentSystem class manages all system objects, including Pacients,
+ *        Doctors, Admins, RobotAssistants, Tickets, Rooms, Agendas and Appointments.
+ *        It provides methods to create and cancel appointments, assign doctors,
+ *        generate tickets, and send notifications.
+ *
+ *        This class owns all objects, creates tables of the database and handles USER.
+ */
 
-  This class owns all objects, creates tables of the database and handles USER.
-*/
-
-#include "AppointmentSystem.h"
+#include "system/AppointmentSystem.h"
 
 #include <sqlite3.h>
 
@@ -20,9 +19,11 @@ Objective:
 #include <set>
 #include <vector>
 
-#include "Admin.h"
-#include "Doctor.h"
-#include "User.h"
+#include "exceptions/exceptions.h"
+
+#include "users/Admin.h"
+#include "users/Doctor.h"
+#include "users/User.h"
 
 AppointmentSystem::AppointmentSystem() {
   // We open the database
@@ -32,7 +33,8 @@ AppointmentSystem::AppointmentSystem() {
   }
   initDataBase();
 
-  agendas = std::make_unique<std::unique_ptr<Agenda>[]>(MAX_DOCTORS); // We no longer use this because of the agenda table
+  agendas = std::make_unique<std::unique_ptr<Agenda>[]>(
+      MAX_DOCTORS);  // We no longer use this because of the agenda table
   tickets = std::make_unique<std::unique_ptr<Ticket>[]>(MAX_TICKETS);
   rooms = std::make_unique<std::unique_ptr<Room>[]>(MAX_ROOMS);
   appointments =
@@ -89,19 +91,14 @@ void AppointmentSystem::initDataBase() {
     std::cerr << "Error creating AGENDA table: " << errMsg << std::endl;
     sqlite3_free(errMsg);
   } else {
-    std::cout << "AGENDA table created correctly with FK to USER."
-              << std::endl;
+    std::cout << "AGENDA table created correctly with FK to USER." << std::endl;
   }
 }
 
 sqlite3 *AppointmentSystem::getDb() { return db; }
 
-// The system already deals with closing the database
-// so we don't need to add it on every function that modifies
-// the DB
 bool AppointmentSystem::insertUser() {
   int rc;
-  bool returning = false;
 
   std::string user_name, password, type;
 
@@ -115,9 +112,7 @@ bool AppointmentSystem::insertUser() {
 
   // Validate type
   if (type != "Administrator" && type != "Doctor" && type != "Patient") {
-    std::cerr
-        << "Invalid user type. Must be Admin, Doctor or Patient.\n";
-    return false;
+    throw DatabaseError("Invalid user type. Must be Admin, Doctor or Patient.\n");
   }
 
   // SQL statement matching the USER table
@@ -129,9 +124,8 @@ bool AppointmentSystem::insertUser() {
 
   rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
   if (rc != SQLITE_OK) {
-    std::cerr << "Error preparing statement: " << sqlite3_errmsg(db)
-              << std::endl;
-    return returning;
+    throw DatabaseError("Error preparing statement: " + 
+                             std::string(sqlite3_errmsg(db)));
   }
 
   sqlite3_bind_text(stmt, 1, user_name.c_str(), -1, SQLITE_TRANSIENT);
@@ -140,14 +134,13 @@ bool AppointmentSystem::insertUser() {
 
   rc = sqlite3_step(stmt);
   if (rc != SQLITE_DONE) {
-    std::cerr << "Error inserting data: " << sqlite3_errmsg(db) << std::endl;
-  } else {
-    std::cout << "Data inserted correctly.\n";
-    returning = true;
-  }
+        std::string msg = "Error inserting data: " + std::string(sqlite3_errmsg(db));
+        sqlite3_finalize(stmt);
+        throw DatabaseError(msg);
+    }
 
-  sqlite3_finalize(stmt);
-  return returning;
+    sqlite3_finalize(stmt);
+    return true;
 }
 
 std::unique_ptr<User> AppointmentSystem::login() {
@@ -168,16 +161,19 @@ std::unique_ptr<User> AppointmentSystem::login() {
   sqlite3_stmt *stmt;
   rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
   if (rc != SQLITE_OK) {
-    std::cerr << "Error preparing query: " << sqlite3_errmsg(db)
-              << "\n";
-    return nullptr;
+    throw DatabaseError("Error preparing login query: " +
+                            std::string(sqlite3_errmsg(db)));
   }
 
   sqlite3_bind_text(stmt, 1, user_name.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_TRANSIENT);
 
   rc = sqlite3_step(stmt);
-  if (rc == SQLITE_ROW) {
+  if (rc != SQLITE_ROW) {
+    sqlite3_finalize(stmt);
+    throw InvalidCredentialsError();
+  }
+
     int id = sqlite3_column_int(stmt, 0);
     std::string nombre =
         reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
@@ -199,13 +195,8 @@ std::unique_ptr<User> AppointmentSystem::login() {
     } else if (tipo == "Patient") {
       return std::make_unique<Pacient>(id, nombre, dummy_mail, pw);
     } else {
-      std::cerr << "Unknown user type: " << tipo << "\n";
-      return nullptr;
+      throw DatabaseError("Unknown user role in DB: " + tipo);
     }
-  }
-
-  sqlite3_finalize(stmt);
-  return nullptr;
 }
 
 void AppointmentSystem::addRobot(std::unique_ptr<Robot> r) {

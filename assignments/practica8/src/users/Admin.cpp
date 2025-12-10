@@ -1,19 +1,18 @@
-/*
-Authoress: Rebeca Castilla
-Date: 17-27/11/2025
-Objective:
-  The Admin class represents a single person
-  object that manages its methods.
-*/
+/**
+ * \author Rebeca Castilla
+ * \date 17-27/11/2025
+ * \brief The Admin class represents a single person
+ *        object that manages its methods.
+ */
 
-#include "Admin.h"
+#include "users/Admin.h"
 
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "AppointmentSystem.h"
-#include "Doctor.h"
+#include "system/AppointmentSystem.h"
+#include "users/Doctor.h"
 
 struct DoctorShow {
   int id;
@@ -33,11 +32,8 @@ void Admin::seeDoctorList(AppointmentSystem& system) {
   sqlite3_stmt* stmt;
   rc = sqlite3_prepare_v2(system.getDb(), sql, -1, &stmt, NULL);
   if (rc != SQLITE_OK) {
-    std::cerr
-        << "Error al preparar la sentencia: "
-        << sqlite3_errmsg(
-               system.getDb())
-        << std::endl;
+    std::cerr << "Error al preparar la sentencia: "
+              << sqlite3_errmsg(system.getDb()) << std::endl;
     sqlite3_finalize(stmt);
     return;
   }
@@ -111,11 +107,8 @@ void Admin::assignAgenda(AppointmentSystem& system) {
   sqlite3_stmt* stmt;
   rc = sqlite3_prepare_v2(system.getDb(), sql, -1, &stmt, NULL);
   if (rc != SQLITE_OK) {
-    std::cerr
-        << "Error al preparar la sentencia: "
-        << sqlite3_errmsg(
-               system.getDb())
-        << std::endl;
+    std::cerr << "Error al preparar la sentencia: "
+              << sqlite3_errmsg(system.getDb()) << std::endl;
     return;
   }
 
@@ -162,12 +155,9 @@ void Admin::createDoctor(AppointmentSystem& system) {
   sqlite3_stmt* stmt;
   rc = sqlite3_prepare_v2(system.getDb(), sql, -1, &stmt, NULL);
   if (rc != SQLITE_OK) {
-    std::cerr
-        << "Error al preparar la sentencia: "
-        << sqlite3_errmsg(
-               system.getDb())
-        << std::endl;
-    
+    std::cerr << "Error al preparar la sentencia: "
+              << sqlite3_errmsg(system.getDb()) << std::endl;
+
     sqlite3_finalize(stmt);
     return;
   }
@@ -200,7 +190,7 @@ void Admin::showMenu(AppointmentSystem& system) {
               << "4. Ver Citas\n"
               << "5. Salir\n"
               << "Seleccione una opción: ";
-    
+
     std::cin >> menuState;
     if (std::cin.fail()) {
       std::cin.clear();
