@@ -28,6 +28,13 @@ class Pacient : public User {
    */
   Pacient(int id, std::string nombre, std::string mail, std::string pw);
 
+   /**
+   * \return User* Contructor copy to generate new object instance in dyn mem
+   */
+  std::unique_ptr<User> clone() const override {
+    return std::make_unique<Pacient>(*this); // Pacient constructor requires arguments
+  }
+
   /**
    * \return std::string The role of the user (Pacient).
    */

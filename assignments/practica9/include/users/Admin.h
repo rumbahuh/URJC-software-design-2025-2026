@@ -28,6 +28,13 @@ class Admin : public User {
   Admin(int id, std::string nombre, std::string mail, std::string pw);
 
   /**
+   * \return User* Contructor copy to generate new object instance in dyn mem
+   */
+  std::unique_ptr<User> clone() const override {
+    return std::make_unique<Admin>(*this); // Admin constructor requires arguments
+  }
+
+  /**
    * \return std::string The role of the user (Admin).
    */
   std::string getRole() const override;

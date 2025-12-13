@@ -42,7 +42,14 @@ class Doctor : public User {
    * \brief The doctor's specialty.
    */
   std::string specialty;
-
+  
+   /**
+   * \return User* Contructor copy to generate new object instance in dyn mem
+   */
+  std::unique_ptr<User> clone() const override {
+    return std::make_unique<Doctor>(*this); // Doctor constructor requires arguments
+  }
+  
   /**
    * \brief Gets the assigned room ID.
    */

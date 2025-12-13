@@ -1,6 +1,6 @@
 /**
  * \author Rebeca Castilla
- * \date 17-23/11/2025
+ * \date 13/12/2025
  * \brief The AppointmentSystem class manages all system objects, including Pacients,
  *        Doctors, Admins, RobotAssistants, Tickets, Rooms, Agendas and Appointments.
  *        It provides methods to create and cancel appointments, assign doctors,
@@ -24,6 +24,8 @@
 #include "users/Admin.h"
 #include "users/Doctor.h"
 #include "users/User.h"
+#include "users/PrototypeRegistry.h"
+
 
 AppointmentSystem* AppointmentSystem::singleSystem = nullptr;
 
@@ -197,17 +199,22 @@ std::unique_ptr<User> AppointmentSystem::login() {
 
     std::string dummy_mail = nombre + "@mail.com";
 
-    // I create a derived type of the User class
-    if (tipo == "Administrator") {
-      return std::make_unique<Admin>(id, nombre, dummy_mail, pw);
-    } else if (tipo == "Doctor") {
-      return std::make_unique<Doctor>(id, nombre, dummy_mail, pw,
-                                      "");  // add specialty later
-    } else if (tipo == "Patient") {
-      return std::make_unique<Pacient>(id, nombre, dummy_mail, pw);
-    } else {
-      throw DatabaseError("Unknown user role in DB: " + tipo);
-    }
+    // We now use the prototype registry
+    int choice = 0;
+    if (tipo == "Administrator") choice = 1;
+    else if (tipo == "Doctor") choice = 2;
+    else if (tipo == "Patient") choice = 3;
+    else throw DatabaseError("Unknown user role in DB: " + tipo);
+
+    std::unique_ptr<User> u(PrototypeRegistry::makeUser(choice));
+
+    // Set the data as logged in
+    u->setId(id);
+    u->setUsername(nombre);
+    u->setMail(dummy_mail);
+    u->setPassword(pw);
+
+    return u;
 }
 
 void AppointmentSystem::addRobot(std::unique_ptr<Robot> r) {

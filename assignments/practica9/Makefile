@@ -13,7 +13,8 @@ MAIN_SOURCES = main.cpp \
                src/robot/Robot.cpp \
                src/appointments/Room.cpp \
                src/appointments/Ticket.cpp \
-               src/users/User.cpp
+               src/users/User.cpp \
+               src/users/PrototypeRegistry.cpp
 
 
 MAIN_OBJECTS = $(patsubst %.cpp, build/%.o, $(MAIN_SOURCES))

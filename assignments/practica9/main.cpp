@@ -18,6 +18,7 @@
 int main() {
   int choice = 0;
   AppointmentSystem* foundation = AppointmentSystem::getSystem();
+  // AppointmentSystem* anotherSystem = AppointmentSystem::getSystem(); exec err
 
   while (choice != 3) {
     std::cout << "\n=== Plataforma gestión de citas ===\n"

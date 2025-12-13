@@ -22,3 +22,8 @@ int User::getId() const { return id; }
 std::string User::getUsername() const { return nombre; }
 std::string User::getMail() const { return mailAddress; }
 std::string User::getPassword() const { return password; }
+
+void User::setId(int newId) { id = newId; }
+void User::setUsername(const std::string &newName) { nombre = newName; }
+void User::setMail(const std::string &newMail) { mailAddress = newMail; }
+void User::setPassword(const std::string &newPw) { password = newPw; }
