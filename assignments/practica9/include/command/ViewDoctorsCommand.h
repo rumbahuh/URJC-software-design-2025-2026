@@ -23,7 +23,7 @@ class ViewDoctorsCommand : public Command {
    * \brief Executes the command
    */
   void execute() override {
-    system->getDoctors();  // o displayAllDoctors()
+    system->seeDoctorList();  // o displayAllDoctors()
   }
 };
 

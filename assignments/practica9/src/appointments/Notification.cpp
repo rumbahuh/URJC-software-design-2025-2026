@@ -2,7 +2,7 @@
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Notification class represents a single message
- *        object which contains details such as type, time, 
+ *        object which contains details such as type, time,
  *        date, content and id.
  * \param type
  * \param time

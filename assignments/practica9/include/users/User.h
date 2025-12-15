@@ -2,12 +2,8 @@
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The User class represents a generic system user with an ID, email, and
- *        password. It serves as the base class (parent) for Pacient, Doctor, and Admin
- *        classes.
- * \param id
- * \param nombre
- * \param mailAddress
- * \param password
+ *        password. It serves as the base class (parent) for Pacient, Doctor,
+ * and Admin classes. \param id \param nombre \param mailAddress \param password
  */
 
 /**
@@ -72,29 +68,28 @@ class User {
   std::string getPassword() const;
 
   /**
- * \brief Sets the user ID.
- * \param newId The new ID to assign.
- */
-void setId(int newId);
+   * \brief Sets the user ID.
+   * \param newId The new ID to assign.
+   */
+  void setId(int newId);
 
-/**
- * \brief Sets the username.
- * \param newName The new username to assign.
- */
-void setUsername(const std::string &newName);
+  /**
+   * \brief Sets the username.
+   * \param newName The new username to assign.
+   */
+  void setUsername(const std::string &newName);
 
-/**
- * \brief Sets the user email.
- * \param newMail The new email to assign.
- */
-void setMail(const std::string &newMail);
+  /**
+   * \brief Sets the user email.
+   * \param newMail The new email to assign.
+   */
+  void setMail(const std::string &newMail);
 
-/**
- * \brief Sets the user password.
- * \param newPw The new password to assign.
- */
-void setPassword(const std::string &newPw);
-
+  /**
+   * \brief Sets the user password.
+   * \param newPw The new password to assign.
+   */
+  void setPassword(const std::string &newPw);
 };
 
 #endif  // USER_H

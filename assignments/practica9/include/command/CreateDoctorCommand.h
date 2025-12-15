@@ -22,9 +22,7 @@ class CreateDoctorCommand : public Command {
   /**
    * \brief Executes the command
    */
-  void execute() override {
-    system->insertUser();  // o createDoctor() si lo implementas
-  }
+  void execute() override { system->createDoctor(); }
 };
 
 #endif  // CREATE_DOCTOR_COMMAND_H

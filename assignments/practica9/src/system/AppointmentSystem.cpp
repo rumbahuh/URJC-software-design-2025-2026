@@ -1,12 +1,9 @@
 /**
  * \author Rebeca Castilla
  * \date 13/12/2025
- * \brief The AppointmentSystem class manages all system objects, including Pacients,
- *        Doctors, Admins, RobotAssistants, Tickets, Rooms, Agendas and Appointments.
- *        It provides methods to create and cancel appointments, assign doctors,
- *        generate tickets, and send notifications.
- *
- *        This class owns all objects, creates tables of the database and handles USER.
+ * \brief The AppointmentSystem class manages all system objects, including
+ * Pacients, Doctors, Admins, RobotAssistants, Tickets, Rooms, Agendas and
+ * Appointments.
  */
 
 #include "system/AppointmentSystem.h"
@@ -16,29 +13,27 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <limits>
 #include <set>
 #include <vector>
 
 #include "exceptions/exceptions.h"
-
 #include "users/Admin.h"
 #include "users/Doctor.h"
-#include "users/User.h"
 #include "users/PrototypeRegistry.h"
-
+#include "users/User.h"
 
 AppointmentSystem* AppointmentSystem::singleSystem = nullptr;
 
 AppointmentSystem::AppointmentSystem() {
-  // We open the database
   if (sqlite3_open("appointment_system.db", &db) != SQLITE_OK) {
     std::cerr << "Not possible to open database\n";
     throw std::runtime_error("Database error.");
   }
+
   initDataBase();
 
-  agendas = std::make_unique<std::unique_ptr<Agenda>[]>(
-      MAX_DOCTORS);  // We no longer use this because of the agenda table
+  agendas = std::make_unique<std::unique_ptr<Agenda>[]>(MAX_DOCTORS);
   tickets = std::make_unique<std::unique_ptr<Ticket>[]>(MAX_TICKETS);
   rooms = std::make_unique<std::unique_ptr<Room>[]>(MAX_ROOMS);
   appointments =
@@ -47,21 +42,20 @@ AppointmentSystem::AppointmentSystem() {
   notifications = std::make_unique<std::string[]>(MAX_NOTIFICATIONS);
 }
 
-// The destructor needs to close the database
 AppointmentSystem::~AppointmentSystem() { sqlite3_close(db); }
 
 AppointmentSystem* AppointmentSystem::getSystem() {
   if (singleSystem == nullptr)
     singleSystem = new AppointmentSystem();
   else
-    std::cout << "Error: trying to get another instance of a AppointmentSystem singleton class!\n";
+    std::cout << "Error: trying to get another AppointmentSystem instance\n";
 
   return singleSystem;
 }
 
 void AppointmentSystem::initDataBase() {
   int exit = 0;
-  char *errMsg = 0;
+  char* errMsg = 0;
 
   // IMPORTANT: Activate foreign keys in SQLite (they are disabled by default)
   std::string enableFK = "PRAGMA foreign_keys = ON;";  // Very important
@@ -73,7 +67,7 @@ void AppointmentSystem::initDataBase() {
   }
 
   // Specification
-  const char *sql_user =
+  const char* sql_user =
       "CREATE TABLE IF NOT EXISTS USER ("
       "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
       "USERNAME TEXT NOT NULL UNIQUE,"
@@ -89,7 +83,7 @@ void AppointmentSystem::initDataBase() {
     std::cout << "USER table created successfully!\n";
   }
 
-  const char *sql_schedule =
+  const char* sql_schedule =
       "CREATE TABLE IF NOT EXISTS SCHEDULE ("
       "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
       "ID_DOCTOR INTEGER NOT NULL ,"
@@ -108,11 +102,10 @@ void AppointmentSystem::initDataBase() {
   }
 }
 
-sqlite3 *AppointmentSystem::getDb() { return db; }
+sqlite3* AppointmentSystem::getDb() { return db; }
 
 bool AppointmentSystem::insertUser() {
   int rc;
-
   std::string user_name, password, type;
 
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -123,37 +116,27 @@ bool AppointmentSystem::insertUser() {
   std::cout << "Tipo de usuario: ";
   std::getline(std::cin, type);
 
-  // Validate type
   if (type != "Administrator" && type != "Doctor" && type != "Patient") {
-    throw DatabaseError("Invalid user type. Must be Admin, Doctor or Patient.\n");
+    throw DatabaseError("Invalid user type.");
   }
 
-  // SQL statement matching the USER table
-  const char *sql =
-      "INSERT INTO USER (USERNAME, PASSWORD, ROLE) VALUES (?, ?, "
-      "?);";
+  const char* sql =
+      "INSERT INTO USER (USERNAME, PASSWORD, ROLE) VALUES (?, ?, ?);";
 
-  sqlite3_stmt *stmt;
-
+  sqlite3_stmt* stmt;
   rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-  if (rc != SQLITE_OK) {
-    throw DatabaseError("Error preparing statement: " + 
-                             std::string(sqlite3_errmsg(db)));
-  }
+  if (rc != SQLITE_OK) throw DatabaseError(sqlite3_errmsg(db));
 
   sqlite3_bind_text(stmt, 1, user_name.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_text(stmt, 3, type.c_str(), -1, SQLITE_TRANSIENT);
 
   rc = sqlite3_step(stmt);
-  if (rc != SQLITE_DONE) {
-        std::string msg = "Error inserting data: " + std::string(sqlite3_errmsg(db));
-        sqlite3_finalize(stmt);
-        throw DatabaseError(msg);
-    }
+  sqlite3_finalize(stmt);
 
-    sqlite3_finalize(stmt);
-    return true;
+  if (rc != SQLITE_DONE) throw DatabaseError(sqlite3_errmsg(db));
+
+  return true;
 }
 
 std::unique_ptr<User> AppointmentSystem::login() {
@@ -166,17 +149,13 @@ std::unique_ptr<User> AppointmentSystem::login() {
   std::cout << "Contraseña: ";
   std::getline(std::cin, password);
 
-  const char *sql =
-      "SELECT ID, USERNAME, PASSWORD, ROLE "
-      "FROM USER "
+  const char* sql =
+      "SELECT ID, USERNAME, PASSWORD, ROLE FROM USER "
       "WHERE USERNAME = ? AND PASSWORD = ?;";
 
-  sqlite3_stmt *stmt;
-  rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
-  if (rc != SQLITE_OK) {
-    throw DatabaseError("Error preparing login query: " +
-                            std::string(sqlite3_errmsg(db)));
-  }
+  sqlite3_stmt* stmt;
+  rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+  if (rc != SQLITE_OK) throw DatabaseError(sqlite3_errmsg(db));
 
   sqlite3_bind_text(stmt, 1, user_name.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_TRANSIENT);
@@ -187,34 +166,24 @@ std::unique_ptr<User> AppointmentSystem::login() {
     throw InvalidCredentialsError();
   }
 
-    int id = sqlite3_column_int(stmt, 0);
-    std::string nombre =
-        reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-    std::string pw =
-        reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
-    std::string tipo =
-        reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+  int id = sqlite3_column_int(stmt, 0);
+  std::string name =
+      reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+  std::string pw = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+  std::string role =
+      reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
 
-    sqlite3_finalize(stmt);
+  sqlite3_finalize(stmt);
 
-    std::string dummy_mail = nombre + "@mail.com";
+  int choice = (role == "Administrator") ? 1 : (role == "Doctor") ? 2 : 3;
 
-    // We now use the prototype registry
-    int choice = 0;
-    if (tipo == "Administrator") choice = 1;
-    else if (tipo == "Doctor") choice = 2;
-    else if (tipo == "Patient") choice = 3;
-    else throw DatabaseError("Unknown user role in DB: " + tipo);
+  std::unique_ptr<User> u(PrototypeRegistry::makeUser(choice));
+  u->setId(id);
+  u->setUsername(name);
+  u->setPassword(pw);
+  u->setMail(name + "@mail.com");
 
-    std::unique_ptr<User> u(PrototypeRegistry::makeUser(choice));
-
-    // Set the data as logged in
-    u->setId(id);
-    u->setUsername(nombre);
-    u->setMail(dummy_mail);
-    u->setPassword(pw);
-
-    return u;
+  return u;
 }
 
 void AppointmentSystem::addRobot(std::unique_ptr<Robot> r) {
@@ -222,7 +191,7 @@ void AppointmentSystem::addRobot(std::unique_ptr<Robot> r) {
 }
 
 void AppointmentSystem::getAllRobotStatesTime() {
-  const std::set<std::unique_ptr<Robot>, RobotCompare> &robots_ = getRobots();
+  const std::set<std::unique_ptr<Robot>, RobotCompare>& robots_ = getRobots();
   std::chrono::steady_clock::time_point ahora =
       std::chrono::steady_clock::now();
 
@@ -237,8 +206,8 @@ void AppointmentSystem::getAllRobotStatesTime() {
   for (std::set<std::unique_ptr<Robot>, RobotCompare>::const_iterator it =
            robots_.begin();
        it != robots_.end(); ++it) {
-    const std::unique_ptr<Robot> &r_ptr = *it;
-    Robot *r = r_ptr.get();
+    const std::unique_ptr<Robot>& r_ptr = *it;
+    Robot* r = r_ptr.get();
 
     std::string state = r->getEstado();
 
@@ -251,7 +220,7 @@ void AppointmentSystem::getAllRobotStatesTime() {
   }
 }
 
-Robot *AppointmentSystem::getNextAvailableRobot() {
+Robot* AppointmentSystem::getNextAvailableRobot() {
   std::set<std::unique_ptr<Robot>, RobotCompare>::iterator it;
   std::set<std::unique_ptr<Robot>, RobotCompare>::iterator seleccionado_it =
       robots.end();
@@ -261,8 +230,8 @@ Robot *AppointmentSystem::getNextAvailableRobot() {
 
   // We go through all the robots in the set
   for (it = robots.begin(); it != robots.end(); ++it) {
-    const std::unique_ptr<Robot> &r_ptr = *it;
-    Robot *r = r_ptr.get();
+    const std::unique_ptr<Robot>& r_ptr = *it;
+    Robot* r = r_ptr.get();
 
     if (r->getEstado() == "Libre") {
       std::chrono::duration<double> tiempoInactivo =
@@ -279,7 +248,7 @@ Robot *AppointmentSystem::getNextAvailableRobot() {
 
   // If we found a free robot, we return a pointer to the most inactive one
   if (seleccionado_it != robots.end()) {
-    Robot *seleccionado = (*seleccionado_it).get();
+    Robot* seleccionado = (*seleccionado_it).get();
 
     std::cout << "[Robot " << seleccionado->getId()
               << "] selected (most inactive).\n";
@@ -290,65 +259,141 @@ Robot *AppointmentSystem::getNextAvailableRobot() {
   return nullptr;
 }
 
-const std::set<std::unique_ptr<Robot>, RobotCompare> &
+void AppointmentSystem::displayAllDoctors() {
+  const char* sql = "SELECT ID, USERNAME FROM USER WHERE ROLE='Doctor';";
+  sqlite3_stmt* stmt;
+
+  if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+    std::cerr << sqlite3_errmsg(db) << std::endl;
+    return;
+  }
+
+  std::cout << "\n--- Lista de Doctores ---\n";
+  bool empty = true;
+
+  while (sqlite3_step(stmt) == SQLITE_ROW) {
+    empty = false;
+    std::cout << "ID: " << sqlite3_column_int(stmt, 0)
+              << " | Nombre: " << sqlite3_column_text(stmt, 1) << std::endl;
+  }
+
+  if (empty) std::cout << "No hay doctores.\n";
+
+  sqlite3_finalize(stmt);
+}
+
+void AppointmentSystem::createDoctor() {
+  std::string user_name, password;
+  std::string type = "Doctor";
+
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  std::cout << "Nombre de usuario: ";
+  std::getline(std::cin, user_name);
+  std::cout << "Contraseña: ";
+  std::getline(std::cin, password);
+
+  const char* sql =
+      "INSERT INTO USER (USERNAME, PASSWORD, ROLE) VALUES (?, ?, ?);";
+
+  sqlite3_stmt* stmt;
+  sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+
+  sqlite3_bind_text(stmt, 1, user_name.c_str(), -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 3, type.c_str(), -1, SQLITE_TRANSIENT);
+
+  if (sqlite3_step(stmt) == SQLITE_DONE)
+    std::cout << "Doctor creado correctamente.\n";
+  else
+    std::cerr << sqlite3_errmsg(db) << std::endl;
+
+  sqlite3_finalize(stmt);
+}
+
+void AppointmentSystem::assignAgenda() {
+  int idDoctor;
+  std::string start, end;
+
+  displayAllDoctors();
+
+  std::cout << "ID Doctor: ";
+  std::cin >> idDoctor;
+  std::cout << "Inicio jornada: ";
+  std::cin >> start;
+  std::cout << "Fin jornada: ";
+  std::cin >> end;
+
+  const char* sql =
+      "INSERT INTO SCHEDULE (ID_DOCTOR, START, END) VALUES (?, ?, ?);";
+
+  sqlite3_stmt* stmt;
+  sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+
+  sqlite3_bind_int(stmt, 1, idDoctor);
+  sqlite3_bind_text(stmt, 2, start.c_str(), -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 3, end.c_str(), -1, SQLITE_TRANSIENT);
+
+  if (sqlite3_step(stmt) == SQLITE_DONE)
+    std::cout << "Agenda asignada correctamente.\n";
+  else
+    std::cerr << sqlite3_errmsg(db) << std::endl;
+
+  sqlite3_finalize(stmt);
+}
+
+const std::set<std::unique_ptr<Robot>, RobotCompare>&
 AppointmentSystem::getRobots() const {
   return robots;
 }
 
 // --------------------------
 void AppointmentSystem::createAppointment() {}
-
 void AppointmentSystem::cancelAppointment() {}
-
 void AppointmentSystem::assignDoctor() {}
-
 void AppointmentSystem::generateTicket() {}
-
 void AppointmentSystem::sendNotification() {}
+void AppointmentSystem::addPacient(const Pacient&) {}
+void AppointmentSystem::addTime(const std::string&) {}
 
-void AppointmentSystem::addPacient(const Pacient &p) {}
-
-void AppointmentSystem::addTime(const std::string &p) {}
-
-const std::vector<std::unique_ptr<Pacient>> &AppointmentSystem::getPacients()
+const std::vector<std::unique_ptr<Pacient>>& AppointmentSystem::getPacients()
     const {
   return pacients;
 }
 
-std::vector<std::unique_ptr<Doctor>> &AppointmentSystem::getDoctors() {
+std::vector<std::unique_ptr<Doctor>>& AppointmentSystem::getDoctors() {
   return doctors;
 }
 
-const std::unique_ptr<std::unique_ptr<Agenda>[]> &
+const std::unique_ptr<std::unique_ptr<Agenda>[]>&
 AppointmentSystem::getAgendas() const {
   return agendas;
 }
 
-const std::vector<std::unique_ptr<Admin>> &AppointmentSystem::getAdmins()
+const std::vector<std::unique_ptr<Admin>>& AppointmentSystem::getAdmins()
     const {
   return admins;
 }
 
-const std::unique_ptr<std::unique_ptr<Ticket>[]> &
+const std::unique_ptr<std::unique_ptr<Ticket>[]>&
 AppointmentSystem::getTickets() const {
   return tickets;
 }
 
-const std::unique_ptr<std::unique_ptr<Room>[]> &AppointmentSystem::getRooms()
+const std::unique_ptr<std::unique_ptr<Room>[]>& AppointmentSystem::getRooms()
     const {
   return rooms;
 }
 
-const std::unique_ptr<std::unique_ptr<Appointment>[]> &
+const std::unique_ptr<std::unique_ptr<Appointment>[]>&
 AppointmentSystem::getAppointments() const {
   return appointments;
 }
 
-const std::unique_ptr<std::string[]> &AppointmentSystem::getTimesSlots() const {
+const std::unique_ptr<std::string[]>& AppointmentSystem::getTimesSlots() const {
   return timesSlots;
 }
 
-const std::unique_ptr<std::string[]> &AppointmentSystem::getNotifications()
+const std::unique_ptr<std::string[]>& AppointmentSystem::getNotifications()
     const {
   return notifications;
 }

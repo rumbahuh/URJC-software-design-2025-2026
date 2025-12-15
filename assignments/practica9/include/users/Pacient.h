@@ -2,8 +2,9 @@
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Pacient class represents a single patient in the system.
- *        It provides methods to interact with appointments, check available time slots,
- *        modify personal data, and confirm attendance for scheduled appointments.
+ *        It provides methods to interact with appointments, check available
+ * time slots, modify personal data, and confirm attendance for scheduled
+ * appointments.
  */
 
 #ifndef PACIENT_H
@@ -28,11 +29,12 @@ class Pacient : public User {
    */
   Pacient(int id, std::string nombre, std::string mail, std::string pw);
 
-   /**
+  /**
    * \return User* Contructor copy to generate new object instance in dyn mem
    */
   std::unique_ptr<User> clone() const override {
-    return std::make_unique<Pacient>(*this); // Pacient constructor requires arguments
+    return std::make_unique<Pacient>(
+        *this);  // Pacient constructor requires arguments
   }
 
   /**

@@ -59,13 +59,15 @@ class Robot {
   std::string getEstado() const;
 
   /**
-   * \return std::chrono::steady_clock::time_point The time of the robot's last activity.
+   * \return std::chrono::steady_clock::time_point The time of the robot's last
+   * activity.
    */
   std::chrono::steady_clock::time_point getUltimaActividad() const;
 
   /**
-   * \brief Requests user credentials and returns IDs from the AppointmentSystem.
-   * \return std::string The IDs or empty string if user is not found.
+   * \brief Requests user credentials and returns IDs from the
+   * AppointmentSystem. \return std::string The IDs or empty string if user is
+   * not found.
    */
   std::string requestIds();
 

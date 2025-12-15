@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "exceptions/exceptions.h"
-
 #include "system/AppointmentSystem.h"
 #include "users/User.h"
 

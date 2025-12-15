@@ -9,19 +9,20 @@
 #define PROTOTYPE_REGISTRY_H
 
 #include <memory>
-#include "users/User.h"
+
 #include "users/Admin.h"
 #include "users/Doctor.h"
 #include "users/Pacient.h"
+#include "users/User.h"
 
 const int N = 4;  // 0 = null, 1 = Admin, 2 = Doctor, 3 = Pacient
 
 class PrototypeRegistry {
-public:
-    static std::unique_ptr<User> makeUser(int choice);
+ public:
+  static std::unique_ptr<User> makeUser(int choice);
 
-private:
-    static std::unique_ptr<User> userTypes[N];
+ private:
+  static std::unique_ptr<User> userTypes[N];
 };
 
 #endif  // PROTOTYPE_REGISTRY_H

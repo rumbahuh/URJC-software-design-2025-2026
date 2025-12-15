@@ -26,36 +26,36 @@ class Agenda {
   Agenda();
 
   /**
-  * \return int Doctor's arrival time
-  */
+   * \return int Doctor's arrival time
+   */
   int getTimeA();
 
   /**
-  * \return int Doctor's leaving time
-  */
+   * \return int Doctor's leaving time
+   */
   int getTimeL();
 
   /**
-  * \brief Sets the doctor's leaving time.
-  * \param t The new leaving time.
-  */
+   * \brief Sets the doctor's leaving time.
+   * \param t The new leaving time.
+   */
   void setTimeL(int t);
 
   /**
-  * \brief Sets the doctor's arrival time.
-  * \param t The new arrival time.
-  */
+   * \brief Sets the doctor's arrival time.
+   * \param t The new arrival time.
+   */
   void setTimeA(int t);
 
   /**
-  * \brief Assigns the doctor's name to this agenda.
-  * \param id The doctor's name or identifier.
-  */
+   * \brief Assigns the doctor's name to this agenda.
+   * \param id The doctor's name or identifier.
+   */
   void setDoctor(std::string id);
 
   /**
-  * \return std::string The doctor's name.
-  */
+   * \return std::string The doctor's name.
+   */
   std::string getDoctor();
 };
 

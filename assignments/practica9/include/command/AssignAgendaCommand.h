@@ -23,7 +23,7 @@ class AssignAgendaCommand : public Command {
    * \brief Executes the command
    */
   void execute() override {
-    system->assignDoctor();  // o assignAgenda()
+    system->assignAgenda();  // o assignAgenda()
   }
 };
 

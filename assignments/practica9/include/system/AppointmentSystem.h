@@ -1,14 +1,14 @@
 /**
  * \author Rebeca Castilla
  * \date 13-19/12/2025
- * \brief The AppointmentSystem class manages all system objects, including Pacients,
- *        Doctors, Admins, RobotAssistants, Tickets, Rooms, Agendas and Appointments.
- *        It provides methods to create and cancel appointments, assign doctors,
- *        generate tickets, and send notifications.
+ * \brief The AppointmentSystem class manages all system objects, including
+ * Pacients, Doctors, Admins, RobotAssistants, Tickets, Rooms, Agendas and
+ * Appointments. It provides methods to create and cancel appointments, assign
+ * doctors, generate tickets, and send notifications.
  *
- *        This class owns all objects, creates tables of the database and handles USER.
- * \param db Database sqlite3 pointer
- * \throws DatabaseError If a low-level error occurs while interacting with SQLite3
+ *        This class owns all objects, creates tables of the database and
+ * handles USER. \param db Database sqlite3 pointer \throws DatabaseError If a
+ * low-level error occurs while interacting with SQLite3
  */
 
 /**
@@ -18,20 +18,21 @@
 #define APPOINTMENT_SYSTEM_H
 
 #include <sqlite3.h>
+
 #include <iostream>
 #include <memory>
 #include <set>
 #include <vector>
 
-#include "users/Admin.h"
 #include "appointments/Agenda.h"
 #include "appointments/Appointment.h"
-#include "users/Doctor.h"
 #include "appointments/Notification.h"
-#include "users/Pacient.h"
-#include "robot/Robot.h"
 #include "appointments/Room.h"
 #include "appointments/Ticket.h"
+#include "robot/Robot.h"
+#include "users/Admin.h"
+#include "users/Doctor.h"
+#include "users/Pacient.h"
 #include "users/User.h"
 
 /**
@@ -47,10 +48,10 @@ struct RobotCompare {
 class AppointmentSystem {
  protected:
   sqlite3 *db;
-  AppointmentSystem(); // Crucial for singleton
+  AppointmentSystem();  // Crucial for singleton
 
  private:
-  static AppointmentSystem* singleSystem; // Pointer to the single instance
+  static AppointmentSystem *singleSystem;  // Pointer to the single instance
 
   static const int MAX_PACIENTS = 100;
   static const int MAX_DOCTORS = 20;
@@ -76,10 +77,10 @@ class AppointmentSystem {
  public:
   ~AppointmentSystem();
 
-  static AppointmentSystem* getSystem();
+  static AppointmentSystem *getSystem();
   // singletons shoul not be cloneable or assignable:
-  AppointmentSystem (AppointmentSystem &otherSystem) = delete;
-  void operator= (const AppointmentSystem&) = delete;
+  AppointmentSystem(AppointmentSystem &otherSystem) = delete;
+  void operator=(const AppointmentSystem &) = delete;
 
   /**
    * \brief Initializes the SQLite database.
@@ -115,7 +116,8 @@ class AppointmentSystem {
   void getAllRobotStatesTime();
 
   /**
-   * \return const std::set<std::unique_ptr<Robot>, RobotCompare>& Read-only reference to robots.
+   * \return const std::set<std::unique_ptr<Robot>, RobotCompare>& Read-only
+   * reference to robots.
    */
   const std::set<std::unique_ptr<Robot>, RobotCompare> &getRobots() const;
 
@@ -124,6 +126,22 @@ class AppointmentSystem {
    */
   Robot *getNextAvailableRobot();
 
+  // DE ADMIN -----
+  /**
+   * \brief Muestra todos los doctores en la base de datos
+   */
+  void displayAllDoctors();
+
+  /**
+   * \brief Crea un nuevo doctor en la base de datos
+   */
+  void createDoctor();
+
+  /**
+   * \brief Asigna agenda a un doctor
+   */
+  void assignAgenda();
+  // -------
   /**
    * \brief Creates an appointment and assigns it.
    */
@@ -167,7 +185,8 @@ class AppointmentSystem {
   const std::vector<std::unique_ptr<Admin>> &getAdmins() const;
   const std::unique_ptr<std::unique_ptr<Ticket>[]> &getTickets() const;
   const std::unique_ptr<std::unique_ptr<Room>[]> &getRooms() const;
-  const std::unique_ptr<std::unique_ptr<Appointment>[]> &getAppointments() const;
+  const std::unique_ptr<std::unique_ptr<Appointment>[]> &getAppointments()
+      const;
   const std::unique_ptr<std::string[]> &getTimesSlots() const;
   const std::unique_ptr<std::string[]> &getNotifications() const;
 };

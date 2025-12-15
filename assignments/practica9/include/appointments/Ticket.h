@@ -29,9 +29,9 @@ class Ticket {
   Ticket(std::string time, std::string room, std::string doctor,
          std::string pacient);
 
-/**
-* \brief Displays ticket information.
-*/
+  /**
+   * \brief Displays ticket information.
+   */
   void printTicket();
 };
 

@@ -2,8 +2,9 @@
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Pacient class represents a single patient in the system.
- *        It provides methods to interact with appointments, check available time slots,
- *        modify personal data, and confirm attendance for scheduled appointments.
+ *        It provides methods to interact with appointments, check available
+ * time slots, modify personal data, and confirm attendance for scheduled
+ * appointments.
  */
 
 #include "users/Pacient.h"
