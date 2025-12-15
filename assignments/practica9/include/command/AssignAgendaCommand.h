@@ -12,20 +12,19 @@
 #include "system/AppointmentSystem.h"
 
 class AssignAgendaCommand : public Command {
-public:
-    /**
-     * \brief Constructor
-     * \param sys Pointer to the AppointmentSystem (Receiver)
-     */
-    explicit AssignAgendaCommand(AppointmentSystem* sys)
-        : Command(sys) {}
+ public:
+  /**
+   * \brief Constructor
+   * \param sys Pointer to the AppointmentSystem (Receiver)
+   */
+  explicit AssignAgendaCommand(AppointmentSystem* sys) : Command(sys) {}
 
-    /**
-     * \brief Executes the command
-     */
-    void execute() override {
-        system->assignDoctor();  // o assignAgenda()
-    }
+  /**
+   * \brief Executes the command
+   */
+  void execute() override {
+    system->assignDoctor();  // o assignAgenda()
+  }
 };
 
-#endif // ASSIGN_AGENDA_COMMAND_H
+#endif  // ASSIGN_AGENDA_COMMAND_H

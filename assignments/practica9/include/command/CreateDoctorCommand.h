@@ -12,20 +12,19 @@
 #include "system/AppointmentSystem.h"
 
 class CreateDoctorCommand : public Command {
-public:
-    /**
-     * \brief Constructor
-     * \param sys Pointer to the AppointmentSystem (Receiver)
-     */
-    explicit CreateDoctorCommand(AppointmentSystem* sys)
-        : Command(sys) {}
+ public:
+  /**
+   * \brief Constructor
+   * \param sys Pointer to the AppointmentSystem (Receiver)
+   */
+  explicit CreateDoctorCommand(AppointmentSystem* sys) : Command(sys) {}
 
-    /**
-     * \brief Executes the command
-     */
-    void execute() override {
-        system->insertUser();  // o createDoctor() si lo implementas
-    }
+  /**
+   * \brief Executes the command
+   */
+  void execute() override {
+    system->insertUser();  // o createDoctor() si lo implementas
+  }
 };
 
-#endif // CREATE_DOCTOR_COMMAND_H
+#endif  // CREATE_DOCTOR_COMMAND_H
