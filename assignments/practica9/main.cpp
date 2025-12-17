@@ -83,6 +83,7 @@ int main() {
       std::cout << "Entrada inválida. Por favor, ingrese un número.\n";
     }
   }
-  foundation->~AppointmentSystem();
+  
+  delete foundation;  // Clean up singleton
   return 0;
 }
