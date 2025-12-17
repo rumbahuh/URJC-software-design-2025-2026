@@ -7,9 +7,10 @@
  * Appointments. It provides methods to create and cancel appointments, assign
  * doctors, generate tickets, and send notifications.
  *
- * This class owns all objects, creates tables of the database and handles USER. 
- * \param db Database sqlite3 pointer 
- * \throws DatabaseError If a low-level error occurs while interacting with SQLite3
+ * This class owns all objects, creates tables of the database and handles USER.
+ * \param db Database sqlite3 pointer
+ * \throws DatabaseError If a low-level error occurs while interacting with
+ * SQLite3
  */
 
 /**
