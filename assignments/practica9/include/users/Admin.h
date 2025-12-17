@@ -1,7 +1,7 @@
 /**
  * \file Admin.h
  * \author Rebeca Castilla
- * \date 15/12/2025
+ * \date 13-17/12/2025
  * \brief The Admin class with proper memory management
  */
 #ifndef ADMIN_H

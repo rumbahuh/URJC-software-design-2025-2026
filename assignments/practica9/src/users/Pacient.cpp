@@ -14,7 +14,7 @@
 Pacient::Pacient(int id, std::string nombre, std::string mail, std::string pw)
     : User(id, nombre, mail, pw) {}
 
-std::string Pacient::getRole() const { return "Pacient"; }
+std::string Pacient::getRole() const { return "Patient"; }
 
 void Pacient::checkTimeSlots() {}
 
