@@ -1,4 +1,5 @@
 /**
+ * \file AppointmentSystem.cpp
  * \author Rebeca Castilla
  * \date 13/12/2025
  * \brief The AppointmentSystem class manages all system objects, including

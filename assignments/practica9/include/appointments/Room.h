@@ -1,9 +1,10 @@
 /**
+ * \file Room.h
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Room class represents a physical room in the system, identified by
  * id. Each Room references the Doctor assigned to it, without owning the Doctor
- *        object.
+ * object.
  * \param id
  * \param doctorId
  */

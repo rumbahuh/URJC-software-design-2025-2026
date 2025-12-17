@@ -1,9 +1,10 @@
 /**
+ * \file Robot.cpp
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Robot class represents a robotic assistant that interacts
- *        with Pacients and Rooms. It can retrieve Pacient information, access
- *        appointments, print tickets, and guide users.
+ * with Pacients and Rooms. It can retrieve Pacient information, access
+ * appointments, print tickets, and guide users.
  * \param id
  * \param estado
  * \param ultimaActividad

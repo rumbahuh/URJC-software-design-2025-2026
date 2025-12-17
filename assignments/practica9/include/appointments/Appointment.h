@@ -1,4 +1,5 @@
 /**
+ * \file Appointment.h
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Appointment class represents a single scheduled meeting between

@@ -1,4 +1,5 @@
 /**
+ * \file Admin.cpp
  * \author Rebeca Castilla
  * \date 15/12/2025
  * \brief The Admin class with proper command memory management

@@ -1,4 +1,5 @@
 /**
+ * \file PrototypeRegistry.cpp
  * \author Rebeca Castilla
  * \date 13/12/2025
  * \brief Prototype registry implementation using unique_ptr.

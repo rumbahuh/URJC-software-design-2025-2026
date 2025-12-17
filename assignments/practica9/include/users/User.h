@@ -1,9 +1,14 @@
 /**
+ * \file User.h
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The User class represents a generic system user with an ID, email, and
- *        password. It serves as the base class (parent) for Pacient, Doctor,
- * and Admin classes. \param id \param nombre \param mailAddress \param password
+ * password. It serves as the base class (parent) for Pacient, Doctor,
+ * and Admin classes.
+ * \param id
+ * \param nombre
+ * \param mailAddress 
+ * \param password
  */
 
 /**

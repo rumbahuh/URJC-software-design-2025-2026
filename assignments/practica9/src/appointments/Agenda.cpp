@@ -1,9 +1,10 @@
 /**
+ * \file Agenda.cpp
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Agenda class keeps track of the Appointments
- *        using pointers, so that each Appointment object
- *        handles its own methods.
+ * using pointers, so that each Appointment object
+ * handles its own methods.
  * \param timeOfArrival
  * \param timeOfLeaving
  * \param doctor The doctor id as std::string

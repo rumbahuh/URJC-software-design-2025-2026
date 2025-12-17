@@ -1,4 +1,5 @@
 /**
+ * \file Agenda.h
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Agenda class keeps track of the Appointments

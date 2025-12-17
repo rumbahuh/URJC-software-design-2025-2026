@@ -1,8 +1,9 @@
 /**
+ * \file Doctor.h
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Doctor class represents a single person
- *        object with an assigned specialty and its methods.
+ * object with an assigned specialty and its methods.
  * \param room
  * \param specialty
  */

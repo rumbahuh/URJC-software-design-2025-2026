@@ -1,4 +1,6 @@
 /**
+ * \file exceptions.h
+ * \author Rebeca Castilla
  * \date 7-11/12/2025
  * \brief Simple throw class
  */

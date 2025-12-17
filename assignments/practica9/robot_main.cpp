@@ -1,4 +1,5 @@
 /**
+ * \file robot_main.cpp
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief Main para probar funcionalidades del robot

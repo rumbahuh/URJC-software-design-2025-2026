@@ -2,7 +2,7 @@
  * \author Rebeca Castilla
  * \date 13/12/2025
  * \brief Prototype registry. Stores a single prototype instance per user type.
- *        Uses unique_ptr for automatic memory management.
+ * Uses unique_ptr for automatic memory management.
  */
 
 #ifndef PROTOTYPE_REGISTRY_H

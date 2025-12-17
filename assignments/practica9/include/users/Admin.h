@@ -4,6 +4,7 @@
  * \date 13-17/12/2025
  * \brief The Admin class with proper memory management
  */
+
 #ifndef ADMIN_H
 #define ADMIN_H
 

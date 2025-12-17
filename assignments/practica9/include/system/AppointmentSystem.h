@@ -1,4 +1,5 @@
 /**
+ * \file AppointmentSystem.h
  * \author Rebeca Castilla
  * \date 13-19/12/2025
  * \brief The AppointmentSystem class manages all system objects, including
@@ -6,9 +7,9 @@
  * Appointments. It provides methods to create and cancel appointments, assign
  * doctors, generate tickets, and send notifications.
  *
- *        This class owns all objects, creates tables of the database and
- * handles USER. \param db Database sqlite3 pointer \throws DatabaseError If a
- * low-level error occurs while interacting with SQLite3
+ * This class owns all objects, creates tables of the database and handles USER. 
+ * \param db Database sqlite3 pointer 
+ * \throws DatabaseError If a low-level error occurs while interacting with SQLite3
  */
 
 /**

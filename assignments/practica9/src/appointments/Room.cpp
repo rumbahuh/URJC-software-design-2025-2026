@@ -1,4 +1,5 @@
 /**
+ * \file Room.cpp
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief The Room class represents a physical room in the system, identified by

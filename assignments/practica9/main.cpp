@@ -1,8 +1,9 @@
 /**
+ * \file main.cpp
  * \author Rebeca Castilla
  * \date 17-27/11/2025
  * \brief Diseñar e implementar un sistema de Login y Gestión de
- *        Usuarios utilizando la librería SQLite3 en un proyecto de C++.
+ * Usuarios utilizando la librería SQLite3 en un proyecto de C++.
  */
 
 #include <chrono>
@@ -83,7 +84,7 @@ int main() {
       std::cout << "Entrada inválida. Por favor, ingrese un número.\n";
     }
   }
-  
+
   delete foundation;  // Clean up singleton
   return 0;
 }
